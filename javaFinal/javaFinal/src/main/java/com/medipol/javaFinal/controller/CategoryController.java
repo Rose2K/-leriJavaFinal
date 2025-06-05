@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
-@Tag(name = "Category API", description = "Operations related to categories")
+@Tag(name = "Category API", description = "Kategorilerle ilgili işlemler")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -25,13 +25,13 @@ public class CategoryController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all categories", description = "Returns a list of all categories in the system")
+    @Operation(summary = "Tüm kategorileri Getir", description = "Sistemdeki tüm kategorilerin listesini döndürür")
     public ResponseEntity<List<Category>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get category by ID", description = "Returns a single category by its ID")
+    @Operation(summary = "Id ye göre kategori getir", description = "Tek bir kategoriyi kimliğine göre döndürür")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
         return categoryService.getCategoryById(id)
                 .map(ResponseEntity::ok)
@@ -39,7 +39,7 @@ public class CategoryController {
     }
 
     @GetMapping("/name/{name}")
-    @Operation(summary = "Get category by name", description = "Returns a single category by its name")
+    @Operation(summary = "Ada göre kategori getir", description = "Adına göre tek bir kategori döndürür")
     public ResponseEntity<Category> getCategoryByName(@PathVariable String name) {
         return categoryService.getCategoryByName(name)
                 .map(ResponseEntity::ok)
@@ -47,7 +47,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    @Operation(summary = "Create a new category", description = "Creates a new category in the system")
+    @Operation(summary = "Yeni kategori oluştur", description = "Sistemde yeni bir kategori oluşturur")
     public ResponseEntity<?> createCategory(@Valid @RequestBody Category category) {
         if (categoryService.existsByName(category.getName())) {
             return ResponseEntity
@@ -58,7 +58,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update a category", description = "Updates an existing category by ID")
+    @Operation(summary = "Kategoriyi güncelle", description = "ID ye göre kategori güncelle")
     public ResponseEntity<?> updateCategory(@PathVariable Long id, @Valid @RequestBody Category category) {
         return categoryService.getCategoryById(id)
                 .map(existingCategory -> {
@@ -75,7 +75,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a category", description = "Deletes an existing category by ID")
+    @Operation(summary = "Kategoriyi Sil", description = "Id ye göre kategori sil")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         if (categoryService.getCategoryById(id).isPresent()) {
             categoryService.deleteCategory(id);
@@ -85,7 +85,7 @@ public class CategoryController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Search categories by name", description = "Returns categories that contain the search term in their name")
+    @Operation(summary = "Ada göre kategori ara", description = "Adında arama terimini içeren kategorileri döndürür")
     public ResponseEntity<List<Category>> searchCategories(@RequestParam String name) {
         return ResponseEntity.ok(categoryService.searchCategoriesByName(name));
     }
