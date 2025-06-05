@@ -7,18 +7,10 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 
-/**
- * Service that implements various sorting and search algorithms
- */
+
 @Service
 public class SortingService {
 
-    /**
-     * Merge sort implementation for a list of products
-     * @param products list of products to sort
-     * @param comparator comparator to sort by
-     * @return sorted list of products
-     */
     public List<Product> mergeSortProducts(List<Product> products, Comparator<Product> comparator) {
         if (products.size() <= 1) {
             return new ArrayList<>(products);
@@ -79,12 +71,7 @@ public class SortingService {
         }
     }
 
-    /**
-     * Quick sort implementation for a list of products
-     * @param products list of products to sort
-     * @param comparator comparator to sort by
-     * @return sorted list of products
-     */
+    
     public List<Product> quickSortProducts(List<Product> products, Comparator<Product> comparator) {
         if (products.size() <= 1) {
             return new ArrayList<>(products);
@@ -118,13 +105,7 @@ public class SortingService {
         return i + 1;
     }
 
-    /**
-     * Binary search implementation for products
-     * @param products list of products (must be sorted already)
-     * @param target target product
-     * @param comparator comparator to compare products
-     * @return index of the product or -1 if not found
-     */
+
     public int binarySearch(List<Product> products, Product target, Comparator<Product> comparator) {
         int left = 0;
         int right = products.size() - 1;
@@ -145,12 +126,7 @@ public class SortingService {
         return -1;
     }
 
-    /**
-     * Binary search for product by price
-     * @param products list of products (must be sorted by price)
-     * @param targetPrice price to search for
-     * @return index of product with closest price or -1 if list is empty
-     */
+
     public int binarySearchByPrice(List<Product> products, BigDecimal targetPrice) {
         if (products.isEmpty()) {
             return -1;
@@ -170,7 +146,7 @@ public class SortingService {
             BigDecimal currentPrice = sortedProducts.get(mid).getPrice();
             int comparison = currentPrice.compareTo(targetPrice);
 
-            // Update closest match
+        
             BigDecimal currentDifference = currentPrice.subtract(targetPrice).abs();
             if (closestDifference == null || currentDifference.compareTo(closestDifference) < 0) {
                 closestDifference = currentDifference;
@@ -189,26 +165,19 @@ public class SortingService {
         return closest;
     }
 
-    /**
-     * Bucket sort implementation for products by price range
-     * @param products list of products to sort
-     * @param minPrice minimum price in the data set
-     * @param maxPrice maximum price in the data set
-     * @param bucketCount number of buckets to use
-     * @return sorted list of products
-     */
+
     public List<Product> bucketSortByPrice(List<Product> products, BigDecimal minPrice, BigDecimal maxPrice, int bucketCount) {
         if (products.isEmpty()) {
             return new ArrayList<>();
         }
 
-        // Create buckets
+     
         List<List<Product>> buckets = new ArrayList<>(bucketCount);
         for (int i = 0; i < bucketCount; i++) {
             buckets.add(new ArrayList<>());
         }
 
-        // Calculate the range for each bucket
+    
         BigDecimal range = maxPrice.subtract(minPrice);
         Function<Product, Integer> getBucketIndex = product -> {
             if (range.compareTo(BigDecimal.ZERO) == 0) {
@@ -220,13 +189,12 @@ public class SortingService {
             return Math.min(Math.max(bucketIdx, 0), bucketCount - 1);
         };
 
-        // Place products in buckets
         for (Product product : products) {
             int bucketIdx = getBucketIndex.apply(product);
             buckets.get(bucketIdx).add(product);
         }
 
-        // Sort each bucket and concatenate
+
         List<Product> result = new ArrayList<>(products.size());
         for (List<Product> bucket : buckets) {
             bucket.sort(Comparator.comparing(Product::getPrice));
