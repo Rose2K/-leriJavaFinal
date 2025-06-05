@@ -10,9 +10,7 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-/**
- * Utility class demonstrating multithreaded programming
- */
+
 @Component
 public class MultithreadedProcessor {
 
@@ -29,26 +27,14 @@ public class MultithreadedProcessor {
                 });
     }
 
-    /**
-     * Process a list of items in parallel using a provided function
-     * @param items list of items to process
-     * @param processor function to apply to each item
-     * @param <T> input type
-     * @param <R> output type
-     * @return list of results
-     */
+
     public <T, R> List<Future<R>> processItemsInParallel(List<T> items, Function<T, R> processor) {
         return items.stream()
                 .map(item -> executorService.submit(() -> processor.apply(item)))
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    /**
-     * Execute an action on each product in parallel
-     * @param products list of products
-     * @param action action to perform on each product
-     * @return list of completion futures
-     */
+
     public List<Future<?>> processProductsInParallel(List<Product> products, Consumer<Product> action) {
         return products.stream()
                 .map(product -> executorService.submit(() -> {
@@ -58,16 +44,12 @@ public class MultithreadedProcessor {
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    /**
-     * Update prices of products in parallel
-     * @param products list of products
-     * @param updateFunction function to calculate the new price
-     * @return list of products with updated prices
-     */
+
     public List<Product> updatePricesInParallel(List<Product> products, Function<Product, java.math.BigDecimal> updateFunction) {
         CountDownLatch latch = new CountDownLatch(products.size());
 
-        // Create tasks for each product
+        // Her ürün için görevler oluşturma
+
         products.forEach(product -> executorService.submit(() -> {
             try {
                 product.setPrice(updateFunction.apply(product));
@@ -78,7 +60,7 @@ public class MultithreadedProcessor {
             }
         }));
 
-        // Wait for all tasks to complete
+        // Tüm görevlerin tamamlanmasını ekleyin
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -89,13 +71,7 @@ public class MultithreadedProcessor {
         return products;
     }
 
-    /**
-     * Process products in batches with a delay between batches
-     * @param products list of products
-     * @param action action to perform on each product
-     * @param batchSize size of each batch
-     * @param delayMs delay between batches in milliseconds
-     */
+
     public void processBatchesWithDelay(List<Product> products, Consumer<Product> action, int batchSize, long delayMs) {
         ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
 
@@ -104,7 +80,7 @@ public class MultithreadedProcessor {
 
             for (int i = 0; i < batches.size(); i++) {
                 final int batchIndex = i;
-                // Schedule each batch with increasing delay
+              
                 scheduledExecutor.schedule(() -> {
                     logger.info("Processing batch {}", batchIndex);
                     processBatch(batches.get(batchIndex), action);
@@ -112,7 +88,7 @@ public class MultithreadedProcessor {
                 }, i * delayMs, TimeUnit.MILLISECONDS);
             }
 
-            // Wait for all batches to complete
+    
             scheduledExecutor.shutdown();
             scheduledExecutor.awaitTermination(products.size() * delayMs + 5000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
@@ -143,13 +119,7 @@ public class MultithreadedProcessor {
         });
     }
 
-    /**
-     * Demonstrates CompletableFuture usage for async processing
-     * @param products list of products
-     * @param processor function to process each product
-     * @param <R> result type
-     * @return list of processed results
-     */
+
     public <R> List<R> processWithCompletableFuture(List<Product> products, Function<Product, R> processor) {
         List<CompletableFuture<R>> futures = products.stream()
                 .map(product -> CompletableFuture.supplyAsync(
@@ -167,7 +137,7 @@ public class MultithreadedProcessor {
                 .join();
     }
 
-    // Cleanup method
+
     public void shutdown() {
         executorService.shutdown();
         try {
